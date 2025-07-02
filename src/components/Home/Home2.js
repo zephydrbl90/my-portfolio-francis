@@ -55,7 +55,7 @@ const socialLinks = [
   },
   {
     id: 'linkedin',
-    href: 'www.linkedin.com/in/fracismo-eben-haezer-8a6a0428a',
+    href: 'https://www.linkedin.com/in/fracismo-eben-haezer-8a6a0428a/',
     icon: FaLinkedinIn,
     label: 'LinkedIn'
   },

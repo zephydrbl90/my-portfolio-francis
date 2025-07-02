@@ -299,7 +299,7 @@ function Contact() {
                       </div>
                     </a>
                     <a 
-                      href="www.linkedin.com/in/fracismo-eben-haezer-8a6a0428a" 
+                      href="https://www.linkedin.com/in/fracismo-eben-haezer-8a6a0428a/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="social-link"
