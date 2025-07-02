@@ -24,12 +24,12 @@ function Contact() {
   // EmailJS configuration - REPLACE THESE WITH YOUR ACTUAL VALUES
   const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID || 'service_mrwlkr5';
   const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID || 'template_nljb3qb';
-  const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY || 'YOUR_ACTUAL_PUBLIC_KEY_HERE';
+  const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY || 'tbUz3BNGhg3KStBln';
 
   // Check if EmailJS is properly configured - FIXED with useCallback
   const isEmailJSConfigured = useCallback(() => {
     return EMAILJS_PUBLIC_KEY && 
-           EMAILJS_PUBLIC_KEY !== 'YOUR_ACTUAL_PUBLIC_KEY_HERE' && 
+           EMAILJS_PUBLIC_KEY !== 'tbUz3BNGhg3KStBln' && 
            EMAILJS_PUBLIC_KEY.length > 10; // Basic validation
   }, [EMAILJS_PUBLIC_KEY]); // Dependencies: only EMAILJS_PUBLIC_KEY
 
