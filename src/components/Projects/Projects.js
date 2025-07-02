@@ -3,10 +3,9 @@ import { Container, Row, Col } from "react-bootstrap";
 import ProjectCard from "./ProjectCards";
 import Particle from "../Particle";
 import leaf from "../../Assets/Projects/leaf.png";
-import emotion from "../../Assets/Projects/emotion.png";
+// Removed unused imports: emotion and suicide
 import editor from "../../Assets/Projects/cyberisk.png";
 import iconplus from "../../Assets/Projects/iconplus.png";
-import suicide from "../../Assets/Projects/suicide.png";
 import bitsOfCode from "../../Assets/Projects/virtual.png";
 
 function Projects() {
@@ -33,9 +32,7 @@ function Projects() {
             <ProjectCard
               imgPath={bitsOfCode}
               title="Virtual Tour"
-              description="An interactive Virtual Campus Tour app designed to help new students and visitors explore the university remotely. It features 360° views of key locations, personalized admin updates, and eliminates the need for physical tours—making campus navigation simple and accessible from anywhere.
-
-"
+              description="An interactive Virtual Campus Tour app designed to help new students and visitors explore the university remotely. It features 360° views of key locations, personalized admin updates, and eliminates the need for physical tours—making campus navigation simple and accessible from anywhere."
             />
           </Col>
 
@@ -54,9 +51,6 @@ function Projects() {
               description="Used the plant disease dataset from Kaggle and trained a image classifer model using 'PyTorch' framework using CNN and Transfer Learning with 38 classes of various plant leaves. The model was successfully able to detect diseased and healthy leaves of 14 unique plants. I was able to achieve an accuracy of 98% by using Resnet34 pretrained model."
             />
           </Col>
-
-         
-         
         </Row>
       </Container>
     </Container>

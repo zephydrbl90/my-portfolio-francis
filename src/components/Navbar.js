@@ -14,7 +14,7 @@ import {
   AiOutlineMail, // Add this import for contact icon
 } from "react-icons/ai";
 
-import { CgFileDocument } from "react-icons/cg";
+// Removed unused import: CgFileDocument
 
 function NavBar() {
   const [expand, updateExpanded] = useState(false);
@@ -81,8 +81,6 @@ function NavBar() {
                 Portofolio
               </Nav.Link>
             </Nav.Item>
-
-           
 
             {/* Add Contact navigation item */}
             <Nav.Item>

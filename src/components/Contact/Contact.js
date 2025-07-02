@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Card, Alert, Toast, ToastContainer } from "react-bootstrap";
-import { AiOutlineMail, AiOutlinePhone, AiOutlineEnvironment } from "react-icons/ai";
+import { AiOutlineMail, AiOutlineEnvironment } from "react-icons/ai";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import emailjs from '@emailjs/browser';
 import "./Contact.css";
@@ -48,7 +48,7 @@ function Contact() {
       console.warn('EmailJS not configured properly');
       setDebugInfo('EmailJS configuration missing or invalid');
     }
-  }, [EMAILJS_PUBLIC_KEY]);
+  }, [EMAILJS_PUBLIC_KEY, isEmailJSConfigured]);
 
   const handleChange = (e) => {
     setFormData({

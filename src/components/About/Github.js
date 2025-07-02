@@ -438,7 +438,7 @@ function LearningProgress() {
             {Object.keys(learningData).map(year => (
               <button
                 key={year}
-                className={`year-button ${selectedYear == year ? 'active' : ''}`}
+                className={`year-button ${selectedYear === year ? 'active' : ''}`}
                 onClick={() => setSelectedYear(parseInt(year))}
               >
                 {year}
@@ -504,7 +504,7 @@ function LearningProgress() {
               {Object.entries(learningData).map(([year, data]) => (
                 <div 
                   key={year}
-                  className={`timeline-item ${selectedYear == year ? 'active' : ''}`}
+                  className={`timeline-item ${selectedYear === year ? 'active' : ''}`}
                   onClick={() => setSelectedYear(parseInt(year))}
                 >
                   <div className="timeline-year">{year}</div>
