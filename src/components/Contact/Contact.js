@@ -1,240 +1,299 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Container, Row, Col, Form, Button, Card, Alert, Toast, ToastContainer } from "react-bootstrap";
 import { AiOutlineMail, AiOutlineEnvironment } from "react-icons/ai";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import emailjs from '@emailjs/browser';
 import "./Contact.css";
 
-function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: ""
-  });
+// CONFIGURATION - Update these with your actual EmailJS credentials
+const CONFIG = {
+  // EmailJS Configuration
+  EMAILJS_SERVICE_ID: "service_mrwlkr5",
+  EMAILJS_TEMPLATE_ID: "template_nljb3qb", 
+  EMAILJS_PUBLIC_KEY: "tbUz3BNGhg3KStBln",
   
-  const [lastSentData, setLastSentData] = useState(null);
+  // Contact Information
+  CONTACT: {
+    NAME: "Francis Rajagukguk",
+    EMAIL: "ebenhaez0201@gmail.com",
+    PHONE: "+62 812-3456-7890",
+    LOCATION: "Jakarta, Indonesia"
+  },
+  
+  // Social Media Links
+  SOCIAL: {
+    GITHUB: "https://github.com/zephydrbl90",
+    LINKEDIN: "https://www.linkedin.com/in/fracismo-eben-haezer-8a6a0428a/",
+    TWITTER: "https://x.com/FMozario20082"
+  },
+  
+  // Settings
+  DEBUG_MODE: false,
+  FORM_TIMEOUT: 30000, // 30 seconds
+  TOAST_DURATION: 5000 // 5 seconds
+};
+
+// Initial form state
+const INITIAL_FORM_STATE = {
+  name: "",
+  email: "",
+  subject: "",
+  message: ""
+};
+
+// Toast types
+const TOAST_TYPES = {
+  SUCCESS: "success",
+  ERROR: "danger",
+  WARNING: "warning",
+  INFO: "info"
+};
+
+function Contact() {
+  // State management
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-  const [debugInfo, setDebugInfo] = useState(null);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("success");
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    variant: TOAST_TYPES.SUCCESS
+  });
 
-  // EmailJS configuration - REPLACE THESE WITH YOUR ACTUAL VALUES
-  const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID || 'service_mrwlkr5';
-  const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID || 'template_nljb3qb';
-  const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY || 'tbUz3BNGhg3KStBln';
+  // Memoized configuration check
+  const isEmailJSConfigured = useMemo(() => {
+    const hasRequiredFields = Boolean(
+      CONFIG.EMAILJS_PUBLIC_KEY?.trim() && 
+      CONFIG.EMAILJS_SERVICE_ID?.trim() && 
+      CONFIG.EMAILJS_TEMPLATE_ID?.trim()
+    );
+    
+    const hasValidKeyLength = CONFIG.EMAILJS_PUBLIC_KEY?.length > 10;
+    
+    const isConfigured = hasRequiredFields && hasValidKeyLength;
+    
+    if (CONFIG.DEBUG_MODE) {
+      console.log('EmailJS Configuration:', {
+        hasRequiredFields,
+        hasValidKeyLength,
+        isConfigured,
+        publicKeyLength: CONFIG.EMAILJS_PUBLIC_KEY?.length
+      });
+    }
+    
+    return isConfigured;
+  }, []);
 
-  // Check if EmailJS is properly configured - FIXED with useCallback
-  const isEmailJSConfigured = useCallback(() => {
-    return EMAILJS_PUBLIC_KEY && 
-           EMAILJS_PUBLIC_KEY !== 'tbUz3BNGhg3KStBln' && 
-           EMAILJS_PUBLIC_KEY.length > 10; // Basic validation
-  }, [EMAILJS_PUBLIC_KEY]); // Dependencies: only EMAILJS_PUBLIC_KEY
-
-  // Initialize EmailJS on component mount
+  // Initialize EmailJS
   useEffect(() => {
-    if (isEmailJSConfigured()) {
+    if (isEmailJSConfigured) {
       try {
-        emailjs.init(EMAILJS_PUBLIC_KEY);
-        console.log('EmailJS initialized successfully');
-        setDebugInfo('EmailJS initialized successfully');
+        emailjs.init(CONFIG.EMAILJS_PUBLIC_KEY);
+        if (CONFIG.DEBUG_MODE) {
+          console.log('✅ EmailJS initialized successfully');
+        }
       } catch (error) {
-        console.error('EmailJS initialization failed:', error);
-        setDebugInfo('EmailJS initialization failed: ' + error.message);
+        console.error('❌ EmailJS initialization failed:', error);
       }
     } else {
-      console.warn('EmailJS not configured properly');
-      setDebugInfo('EmailJS configuration missing or invalid');
+      console.warn('⚠️ EmailJS not properly configured');
     }
-  }, [EMAILJS_PUBLIC_KEY, isEmailJSConfigured]);
+  }, [isEmailJSConfigured]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+  // Handle form input changes
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+
+  // Toast notification handler
+  const showToast = useCallback((message, variant = TOAST_TYPES.SUCCESS) => {
+    setToast({
+      show: true,
+      message,
+      variant
     });
-  };
+  }, []);
 
-  const showNotification = (message, variant = "success") => {
-    setToastMessage(message);
-    setToastVariant(variant);
-    setShowToast(true);
-    
-    // Auto hide after 5 seconds
-    setTimeout(() => {
-      setShowToast(false);
-    }, 5000);
-  };
+  const hideToast = useCallback(() => {
+    setToast(prev => ({ ...prev, show: false }));
+  }, []);
 
-  const validateForm = () => {
+  // Form validation
+  const validateForm = useCallback(() => {
     const errors = [];
+    const { name, email, subject, message } = formData;
     
-    if (!formData.name.trim()) errors.push("Name is required");
-    if (!formData.email.trim()) errors.push("Email is required");
-    if (!formData.subject.trim()) errors.push("Subject is required");
-    if (!formData.message.trim()) errors.push("Message is required");
+    // Required field validation
+    if (!name.trim()) errors.push("Name is required");
+    if (!email.trim()) errors.push("Email is required");
+    if (!subject.trim()) errors.push("Subject is required");
+    if (!message.trim()) errors.push("Message is required");
     
-    // Email validation
+    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email.trim() && !emailRegex.test(formData.email)) {
+    if (email.trim() && !emailRegex.test(email.trim())) {
       errors.push("Please enter a valid email address");
     }
     
+    // Length validation
+    if (name.trim().length > 100) errors.push("Name must be less than 100 characters");
+    if (subject.trim().length > 200) errors.push("Subject must be less than 200 characters");
+    if (message.trim().length > 2000) errors.push("Message must be less than 2000 characters");
+    
     return errors;
-  };
+  }, [formData]);
 
-  const handleSubmit = async (e) => {
+  // Form submission handler
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
-    // Reset states
+    // Prevent double submission
+    if (isSubmitting) return;
+    
     setIsSubmitting(true);
     setSubmitStatus(null);
-    setDebugInfo(null);
-
-    // Validate form
-    const validationErrors = validateForm();
-    if (validationErrors.length > 0) {
-      setSubmitStatus('error');
-      setDebugInfo(validationErrors.join(', '));
-      setIsSubmitting(false);
-      showNotification(validationErrors[0], "danger");
-      return;
-    }
-
-    // Check EmailJS configuration
-    if (!isEmailJSConfigured()) {
-      setSubmitStatus('error');
-      setDebugInfo('EmailJS not configured properly. Please add your EmailJS credentials.');
-      setIsSubmitting(false);
-      showNotification("Email service not configured. Please contact me directly using the information above.", "danger");
-      return;
-    }
-
-    console.log('=== EmailJS Debug Info ===');
-    console.log('Service ID:', EMAILJS_SERVICE_ID);
-    console.log('Template ID:', EMAILJS_TEMPLATE_ID);
-    console.log('Public Key configured:', EMAILJS_PUBLIC_KEY ? 'Yes' : 'No');
-    console.log('Form data:', formData);
-
-    // Template parameters
-    const templateParams = {
-      from_name: formData.name,
-      from_email: formData.email,
-      subject: formData.subject,
-      message: formData.message,
-      to_name: 'Francis Rajagukguk',
-      reply_to: formData.email
-    };
-
-    console.log('Template parameters:', templateParams);
 
     try {
-      // Add timeout to prevent infinite loading
+      // Validate form
+      const validationErrors = validateForm();
+      if (validationErrors.length > 0) {
+        throw new Error(validationErrors[0]);
+      }
+
+      // Check EmailJS configuration
+      if (!isEmailJSConfigured) {
+        throw new Error('Email service is not configured. Please contact me directly using the information above.');
+      }
+
+      // Prepare template parameters
+      const templateParams = {
+        from_name: formData.name.trim(),
+        from_email: formData.email.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+        to_name: CONFIG.CONTACT.NAME,
+        reply_to: formData.email.trim()
+      };
+
+      if (CONFIG.DEBUG_MODE) {
+        console.log('Sending email with params:', templateParams);
+      }
+
+      // Create timeout promise
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Request timeout after 30 seconds')), 30000);
+        setTimeout(() => reject(new Error('Request timeout. Please try again.')), CONFIG.FORM_TIMEOUT);
       });
 
+      // Send email with timeout
       const emailPromise = emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        templateParams,
-        EMAILJS_PUBLIC_KEY
+        CONFIG.EMAILJS_SERVICE_ID,
+        CONFIG.EMAILJS_TEMPLATE_ID,
+        templateParams
       );
 
       const result = await Promise.race([emailPromise, timeoutPromise]);
 
-      console.log('✅ Email sent successfully!');
-      console.log('EmailJS Response:', result);
-      
-      // Store the sent data for preview
-      setLastSentData({...formData});
-      
+      // Success handling
       setSubmitStatus('success');
-      setDebugInfo(`Email sent successfully! Status: ${result.status}, Text: ${result.text}`);
+      showToast(`Message sent successfully! Thank you ${formData.name.trim()}, I'll get back to you soon!`, TOAST_TYPES.SUCCESS);
       
-      // Show success notification
-      showNotification(`Message sent successfully! Thank you ${formData.name}, I'll get back to you soon!`, "success");
+      // Reset form
+      setFormData(INITIAL_FORM_STATE);
       
-      // Clear form
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: ""
-      });
+      if (CONFIG.DEBUG_MODE) {
+        console.log('✅ Email sent successfully:', result);
+      }
 
     } catch (error) {
       console.error('❌ Error sending email:', error);
       
       setSubmitStatus('error');
       
-      // Improved error handling
-      let errorMessage = 'Failed to send email. ';
+      // Enhanced error handling
+      let errorMessage = 'Failed to send message. ';
       
-      if (error.message === 'Request timeout after 30 seconds') {
-        errorMessage = 'Request timed out. Please check your internet connection and try again.';
+      if (error.message.includes('timeout')) {
+        errorMessage = 'Request timed out. Please check your connection and try again.';
       } else if (error.status) {
-        switch (error.status) {
-          case 400:
-            errorMessage += 'Invalid request. Please check your EmailJS template variables.';
-            break;
-          case 401:
-            errorMessage += 'Authentication failed. Please check your EmailJS public key.';
-            break;
-          case 403:
-            errorMessage += 'Access denied. Please check service permissions in EmailJS dashboard.';
-            break;
-          case 404:
-            errorMessage += 'Service or template not found. Please check your EmailJS IDs.';
-            break;
-          case 429:
-            errorMessage += 'Too many requests. Please try again later.';
-            break;
-          default:
-            errorMessage += `Server error (${error.status}). Please try again.`;
-        }
-      } else if (error.text) {
-        errorMessage += error.text;
+        const statusMessages = {
+          400: 'Invalid request. Please check all fields.',
+          401: 'Authentication failed. Please try again later.',
+          403: 'Access denied. Please try again later.',
+          404: 'Service unavailable. Please contact me directly.',
+          429: 'Too many requests. Please wait a moment and try again.',
+        };
+        errorMessage = statusMessages[error.status] || `Server error (${error.status}). Please try again.`;
       } else {
-        errorMessage += error.message || 'Unknown error occurred.';
+        errorMessage = error.message || 'An unexpected error occurred. Please try again.';
       }
       
-      setDebugInfo(errorMessage);
-      showNotification("Failed to send message. You can contact me directly using the information above.", "danger");
+      showToast(errorMessage, TOAST_TYPES.ERROR);
       
     } finally {
-      // Always reset loading state
       setIsSubmitting(false);
     }
-  };
+  }, [formData, isSubmitting, isEmailJSConfigured, validateForm, showToast]);
+
+  // Test EmailJS function (for debugging)
+  const testEmailJS = useCallback(async () => {
+    if (!isEmailJSConfigured) {
+      showToast('EmailJS is not configured', TOAST_TYPES.ERROR);
+      return;
+    }
+
+    try {
+      const result = await emailjs.send(
+        CONFIG.EMAILJS_SERVICE_ID,
+        CONFIG.EMAILJS_TEMPLATE_ID,
+        {
+          from_name: "Test User",
+          from_email: "test@example.com",
+          subject: "Test Email",
+          message: "This is a test message from your contact form.",
+          to_name: CONFIG.CONTACT.NAME
+        }
+      );
+      
+      showToast('Test email sent successfully!', TOAST_TYPES.SUCCESS);
+      console.log('Test email result:', result);
+    } catch (error) {
+      showToast('Test email failed: ' + error.message, TOAST_TYPES.ERROR);
+      console.error('Test email error:', error);
+    }
+  }, [isEmailJSConfigured, showToast]);
 
   return (
     <Container fluid className="contact-section">
-      {/* Toast Notification */}
+      {/* Toast Notifications */}
       <ToastContainer position="top-center" className="p-3" style={{ zIndex: 9999 }}>
         <Toast 
-          show={showToast} 
-          onClose={() => setShowToast(false)}
-          bg={toastVariant}
-          delay={5000}
+          show={toast.show} 
+          onClose={hideToast}
+          bg={toast.variant}
+          delay={CONFIG.TOAST_DURATION}
           autohide
         >
           <Toast.Header>
             <strong className="me-auto">
-              {toastVariant === "success" ? "Success" : "Alert"}
+              {toast.variant === TOAST_TYPES.SUCCESS ? "Success" : 
+               toast.variant === TOAST_TYPES.ERROR ? "Error" : 
+               toast.variant === TOAST_TYPES.WARNING ? "Warning" : "Info"}
             </strong>
             <small>just now</small>
           </Toast.Header>
           <Toast.Body className="text-white">
-            {toastMessage}
+            {toast.message}
           </Toast.Body>
         </Toast>
       </ToastContainer>
 
       <Container>
         <Row style={{ justifyContent: "center", padding: "10px" }}>
+          {/* Header Section */}
           <Col
             md={7}
             style={{
@@ -247,7 +306,6 @@ function Contact() {
               Get In <strong className="purple">Touch</strong>
             </h1>
             
-            {/* Intro Quote */}
             <Card className="quote-card-view">
               <Card.Body>
                 <blockquote className="blockquote mb-0">
@@ -272,15 +330,17 @@ function Contact() {
                 <div className="contact-info">
                   <div className="contact-item">
                     <AiOutlineMail className="contact-icon" />
-                    <span>ebenhaez0201@gmail.com</span>
+                    <a href={`mailto:${CONFIG.CONTACT.EMAIL}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                      {CONFIG.CONTACT.EMAIL}
+                    </a>
                   </div>
                   <div className="contact-item">
                     <FaLinkedin className="contact-icon" />
-                    <span>Francis Eben Haezer Rajagukguk</span>
+                    <span>{CONFIG.CONTACT.NAME}</span>
                   </div>
                   <div className="contact-item">
                     <AiOutlineEnvironment className="contact-icon" />
-                    <span>Jakarta, Indonesia</span>
+                    <span>{CONFIG.CONTACT.LOCATION}</span>
                   </div>
                 </div>
 
@@ -288,10 +348,11 @@ function Contact() {
                   <h3>Connect With Me</h3>
                   <div className="social-links">
                     <a 
-                      href="https://github.com/zephydrbl90" 
+                      href={CONFIG.SOCIAL.GITHUB} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="social-link"
+                      aria-label="GitHub Profile"
                     >
                       <div className="social-link-content">
                         <FaGithub />
@@ -299,10 +360,11 @@ function Contact() {
                       </div>
                     </a>
                     <a 
-                      href="https://www.linkedin.com/in/fracismo-eben-haezer-8a6a0428a/" 
+                      href={CONFIG.SOCIAL.LINKEDIN} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="social-link"
+                      aria-label="LinkedIn Profile"
                     >
                       <div className="social-link-content">
                         <FaLinkedin />
@@ -310,10 +372,11 @@ function Contact() {
                       </div>
                     </a>
                     <a 
-                      href="https://x.com/FMozario20082" 
+                      href={CONFIG.SOCIAL.TWITTER} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="social-link"
+                      aria-label="Twitter Profile"
                     >
                       <div className="social-link-content">
                         <FaTwitter />
@@ -330,61 +393,44 @@ function Contact() {
           <Col md={7} style={{ paddingBottom: "50px" }}>
             <Card className="contact-card-view">
               <Card.Body>
-                <h3>Send Me a Message</h3>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h3>Send Me a Message</h3>
+                  {CONFIG.DEBUG_MODE && (
+                    <Button 
+                      variant="outline-secondary" 
+                      size="sm" 
+                      onClick={testEmailJS}
+                      disabled={!isEmailJSConfigured}
+                    >
+                      Test EmailJS
+                    </Button>
+                  )}
+                </div>
                 
+                {/* Configuration Status */}
+                <div className="mb-3" style={{ fontSize: '0.9em' }}>
+                  <strong>Status:</strong> 
+                  <span className={isEmailJSConfigured ? 'text-success' : 'text-danger'}>
+                    {isEmailJSConfigured ? ' ✅ Email service ready' : ' ❌ Email service not configured'}
+                  </span>
+                </div>
+
                 {/* Configuration Warning */}
-                {!isEmailJSConfigured() && (
-                  <Alert variant="warning" className="mt-3">
-                    <strong>Setup Required:</strong> 
-                    <ul className="mb-0 mt-2">
-                      <li>Add your EmailJS public key to environment variables or directly in code</li>
-                      <li>Verify your service ID and template ID are correct</li>
-                      <li>For now, please contact me directly using the information above</li>
-                    </ul>
+                {!isEmailJSConfigured && (
+                  <Alert variant="warning">
+                    <strong>Setup Required:</strong> Email service is not properly configured. 
+                    Please contact me directly using the information above or check the EmailJS configuration.
                   </Alert>
                 )}
                 
                 {/* Status Messages */}
                 {submitStatus === 'success' && (
-                  <Alert variant="success" className="mt-3">
+                  <Alert variant="success">
                     <strong>Success!</strong> Your message has been sent successfully. I'll get back to you soon!
-                    {lastSentData && (
-                      <div className="mt-2" style={{ fontSize: '0.9em' }}>
-                        Message from: <strong>{lastSentData.name}</strong> ({lastSentData.email})
-                      </div>
-                    )}
-                  </Alert>
-                )}
-                
-                {submitStatus === 'error' && (
-                  <Alert variant="danger" className="mt-3">
-                    <strong>Error!</strong> {debugInfo}
                   </Alert>
                 )}
 
-                {/* Configuration Status */}
-                <div className="mt-3" style={{ fontSize: '0.9em', opacity: 0.7 }}>
-                  <strong>Status:</strong> EmailJS is {isEmailJSConfigured() ? '✅ configured' : '❌ not configured'}
-                </div>
-
-                {/* Debug Information (only in development) */}
-                {process.env.NODE_ENV === 'development' && debugInfo && (
-                  <details style={{ marginTop: '10px' }}>
-                    <summary>Debug Information</summary>
-                    <div>
-                      <pre style={{ fontSize: '0.8em', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
-                        Service ID: {EMAILJS_SERVICE_ID}
-                        Template ID: {EMAILJS_TEMPLATE_ID}
-                        Public Key: {EMAILJS_PUBLIC_KEY ? 'Set' : 'Not set'}
-                        Is Configured: {isEmailJSConfigured() ? 'Yes' : 'No'}
-                        
-                        {debugInfo}
-                      </pre>
-                    </div>
-                  </details>
-                )}
-
-                <Form onSubmit={handleSubmit} className="mt-4">
+                <Form onSubmit={handleSubmit} className="mt-4" noValidate>
                   <Row>
                     <Col md={6}>
                       <Form.Group className="mb-3">
@@ -393,10 +439,11 @@ function Contact() {
                           type="text"
                           name="name"
                           value={formData.name}
-                          onChange={handleChange}
+                          onChange={handleInputChange}
                           placeholder="Your Full Name"
                           required
                           disabled={isSubmitting}
+                          maxLength={100}
                         />
                       </Form.Group>
                     </Col>
@@ -407,7 +454,7 @@ function Contact() {
                           type="email"
                           name="email"
                           value={formData.email}
-                          onChange={handleChange}
+                          onChange={handleInputChange}
                           placeholder="your.email@example.com"
                           required
                           disabled={isSubmitting}
@@ -422,10 +469,11 @@ function Contact() {
                       type="text"
                       name="subject"
                       value={formData.subject}
-                      onChange={handleChange}
+                      onChange={handleInputChange}
                       placeholder="What's this about?"
                       required
                       disabled={isSubmitting}
+                      maxLength={200}
                     />
                   </Form.Group>
 
@@ -436,26 +484,45 @@ function Contact() {
                       rows={5}
                       name="message"
                       value={formData.message}
-                      onChange={handleChange}
+                      onChange={handleInputChange}
                       placeholder="Tell me about your project, question, or just say hello..."
                       required
                       disabled={isSubmitting}
+                      maxLength={2000}
                     />
+                    <Form.Text className="text-muted">
+                      {formData.message.length}/2000 characters
+                    </Form.Text>
                   </Form.Group>
 
-                  <Button
-                    type="submit"
-                    className="contact-submit-btn"
-                    disabled={isSubmitting || !isEmailJSConfigured()}
-                  >
-                    {isSubmitting ? 'Sending...' : isEmailJSConfigured() ? 'Send Message' : 'Email Not Configured'}
-                  </Button>
+                  <div className="d-grid">
+                    <Button
+                      type="submit"
+                      className="contact-submit-btn"
+                      disabled={isSubmitting || !isEmailJSConfigured}
+                      size="lg"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Sending...
+                        </>
+                      ) : isEmailJSConfigured ? (
+                        'Send Message'
+                      ) : (
+                        'Email Service Unavailable'
+                      )}
+                    </Button>
+                  </div>
                   
                   {/* Alternative contact suggestion */}
                   <div className="mt-3 text-center" style={{ fontSize: '0.9em', opacity: 0.8 }}>
                     Having trouble? You can also reach me directly at{' '}
-                    <a href="mailto:ebenhaez0201@gmail.com" style={{ color: 'var(--primary-accent)' }}>
-                      ebenhaez0201@gmail.com
+                    <a 
+                      href={`mailto:${CONFIG.CONTACT.EMAIL}?subject=Contact from Portfolio`} 
+                      style={{ color: 'var(--primary-accent)' }}
+                    >
+                      {CONFIG.CONTACT.EMAIL}
                     </a>
                   </div>
                 </Form>
