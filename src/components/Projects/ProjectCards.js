@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 
 function ProjectCards(props) {
   return (
@@ -84,11 +85,50 @@ function ProjectCards(props) {
             textAlign: "justify", 
             color: 'rgba(255, 255, 255, 0.85)',
             lineHeight: '1.6',
-            fontSize: '0.95em'
+            fontSize: '0.95em',
+            marginBottom: '20px'
           }}
         >
           {props.description}
         </Card.Text>
+        
+        {/* View More Button */}
+        {props.onViewMore && (
+          <div style={{ textAlign: 'center', marginTop: '15px' }}>
+            <Button
+              variant="outline-warning"
+              size="sm"
+              onClick={props.onViewMore}
+              style={{
+                backgroundColor: 'rgba(230, 126, 34, 0.1)',
+                border: '1px solid #e67e22',
+                color: '#e67e22',
+                borderRadius: '20px',
+                padding: '10px 20px',
+                fontSize: '0.9em',
+                fontWeight: '500',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(10px)',
+                width: '100%',
+                maxWidth: '150px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#e67e22';
+                e.currentTarget.style.color = 'white';
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.boxShadow = '0 5px 15px rgba(230, 126, 34, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(230, 126, 34, 0.1)';
+                e.currentTarget.style.color = '#e67e22';
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              View More
+            </Button>
+          </div>
+        )}
         
         {/* Optional: Add a subtle bottom border */}
         <div style={{

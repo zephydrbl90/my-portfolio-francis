@@ -326,7 +326,7 @@ function Home2() {
                   color: 'var(--primary-accent)', 
                   marginBottom: '1rem', 
                   textAlign: 'center', 
-                  fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)' 
+                  fontSize: 'clamp(2.0rem, 2.5vw, 2.0rem)' 
                 }}>
                   💡 What Drives Me
                 </h3>
@@ -338,7 +338,7 @@ function Home2() {
                 }}>
                   {passionData.map((item) => (
                     <AnimatedCard key={item.id}>
-                      <div style={{ fontSize: '2rem', marginBottom: '0.8rem' }}>
+                      <div style={{ fontSize: '3.0rem', marginBottom: '0.8rem' }}>
                         {item.icon}
                       </div>
                       <h4 style={{ 
@@ -377,7 +377,7 @@ function Home2() {
                 }}>
                   {personalityData.map((item) => (
                     <AnimatedCard key={item.id}>
-                      <div style={{ fontSize: '2.2rem', marginBottom: '0.8rem' }}>
+                      <div style={{ fontSize: '3.0rem', marginBottom: '0.8rem' }}>
                         {item.icon}
                       </div>
                       <h4 style={{ 
