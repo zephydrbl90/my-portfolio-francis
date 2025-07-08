@@ -1,9 +1,12 @@
+# Francis Eben Haezer Rajagukguk - Portfolio Website
+
 <h2 align="center">
-  Portfolio Website - v2.0<br/>
-  <a href="https://soumyajit.vercel.app/" target="_blank">soumyajit.tech</a>
+  Personal Portfolio - Inquisitive Mind<br/>
+  <a href="#" target="_blank">francis-portfolio.dev</a>
 </h2>
+
 <div align="center">
-  <img alt="Demo" src="./Images/readme-img1.png" />
+  <img alt="Portfolio Preview" src="./Images/portfolio-preview.png" />
 </div>
 
 <br/>
@@ -13,64 +16,120 @@
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com) &nbsp;
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) &nbsp;
 [![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com) &nbsp;
-![GitHub Repo stars](https://img.shields.io/github/stars/soumyajit4419/Portfolio?color=red&logo=github&style=for-the-badge) &nbsp;
-![GitHub forks](https://img.shields.io/github/forks/soumyajit4419/Portfolio?color=red&logo=github&style=for-the-badge)
 
 </center>
 
-<h3 align="center">
-    🔹
-    <a href="https://github.com/soumyajit4419/Portfolio/issues">Report Bug</a> &nbsp; &nbsp;
-    🔹
-    <a href="https://github.com/soumyajit4419/Portfolio/issues">Request Feature</a>
-</h3>
+## About Me
 
-## TL;DR
+Hi there! 👋 I'm **Francis Eben Haezer Rajagukguk**, an inquisitive-minded developer passionate about creating innovative web solutions and exploring the depths of technology.
 
-You can fork this repo to modify and make changes of your own. Please give me proper credit by linking back to [Soumyajit4419](https://github.com/soumyajit4419/Portfolio). Thanks!
+I believe in the power of curiosity and continuous learning. My journey in technology is driven by an insatiable desire to understand how things work and how they can be improved.
 
-## Built With
+## What I Do
 
-My personal portfolio <a href="https://soumyajit.vercel.app/" target="_blank">soumyajit.tech</a> which features some of my github projects as well as my resume and technical skills.<br/>
+🚀 **Web Development** - Creating modern, responsive web applications
+🔍 **Technology Exploration** - Always learning new technologies and frameworks
+💡 **Innovation** - Building solutions that make a difference
+🎯 **Problem Solving** - Tackling complex challenges with creative approaches
 
-This project was built using these technologies.
+## My Philosophy
 
-- React.js
-- Node.js
-- Express.js
-- CSS3
-- VsCode
-- Vercel
+> "Stay curious, stay hungry for knowledge, and never stop exploring the endless possibilities that technology offers."
+
+## Tech Stack
+
+This portfolio showcases my skills and projects, built with:
+
+- **Frontend**: React.js, HTML5, CSS3, JavaScript
+- **Backend**: Node.js, Express.js
+- **Styling**: React-Bootstrap, Custom CSS
+- **Tools**: VS Code, Git
+- **Deployment**: Vercel
 
 ## Features
 
-**📖 Multi-Page Layout**
+✨ **Clean, Modern Design** - Reflects my attention to detail and aesthetic sense
 
-**🎨 Styled with React-Bootstrap and Css with easy to customize colors**
+📱 **Fully Responsive** - Works seamlessly across all devices
 
-**📱 Fully Responsive**
+🎨 **Interactive Elements** - Engaging user experience with smooth animations
+
+📖 **Multi-Section Layout** - Organized presentation of skills, projects, and experience
+
+🌟 **Personal Branding** - Authentic representation of my personality and values
 
 ## Getting Started
 
-Clone down this repository. You will need `node.js` and `git` installed globally on your machine.
+Want to explore my code or use this as inspiration for your own portfolio?
 
-## 🛠 Installation and Setup Instructions
+### Prerequisites
+- Node.js installed on your machine
+- Git for version control
 
-1. Installation: `npm install`
+### Installation
 
-2. In the project directory, you can run: `npm start`
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/franciseben/portfolio.git
+   ```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-The page will reload if you make edits.
+2. Navigate to the project directory:
+   ```bash
+   cd portfolio
+   ```
 
-## Usage Instructions
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Open the project folder and Navigate to `/src/components/`. <br/>
-You will find all the components used and you can edit your information accordingly.
+4. Start the development server:
+   ```bash
+   npm start
+   ```
 
-### Show your support
+5. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-Give a ⭐ if you like this website!
+## Customization
 
-<a href="https://www.buymeacoffee.com/soumyajit4419" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" height= "60px" width= "217px" ></a>
+Feel free to fork this repository and make it your own! Here's how:
+
+1. Navigate to `/src/components/` to find all the main components
+2. Update the content in each component to reflect your information
+3. Modify colors and styling in the CSS files
+4. Replace images with your own in the `/public/images/` directory
+5. Update the metadata in `public/index.html`
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── About/
+│   ├── Home/
+│   ├── Portfolio/
+│   └── Contact/
+├── assets/
+├── styles/
+└── utils/
+```
+
+## Connect With Me
+
+I'm always excited to connect with fellow developers and curious minds!
+
+- 📧 Email: [your-email@example.com]
+- 💼 LinkedIn: [Your LinkedIn Profile]
+- 🐱 GitHub: [Your GitHub Profile]
+- 🌐 Website: [Your Website]
+
+## Show Your Support
+
+If you found this project helpful or inspiring, please consider giving it a ⭐!
+
+---
+
+<div align="center">
+  <p><strong>Built with curiosity and passion by Francis Eben Haezer Rajagukguk</strong></p>
+  <p><em>"Exploring the depths of technology, one line of code at a time."</em></p>
+</div>
